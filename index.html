@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Liu Ling · 你好，世界</title>
+  <meta name="description" content="Liu Ling 的公开运行日志：近期成果和每周复盘，做到没做到都摆在这里。三个 AI 替他盯着，你也可以。">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Liu Ling · 你好，世界">
+  <meta property="og:description" content="近期成果和每周复盘，做到没做到都摆在这里。三个 AI 替他盯着，你也可以。">
+  <meta property="og:image" content="https://liulingx.github.io/assets/og.png">
+  <meta property="og:url" content="https://liulingx.github.io/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Liu Ling · 你好，世界">
+  <meta name="twitter:description" content="近期成果和每周复盘，做到没做到都摆在这里。">
+  <meta name="twitter:image" content="https://liulingx.github.io/assets/og.png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/deepseek.webp" as="image" type="image/webp">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // 主题在首帧前定下来，避免闪一下
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("showcase-theme"); } catch (e) {}
+      var system = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      var q = /[?&]theme=(light|dark|system|opposite)\b/.exec(location.search);
+      if (q) t = q[1];
+      if (t === "light" || t === "dark") t = t === system ? "system" : "opposite";
+      if (t === "opposite") document.documentElement.setAttribute("data-theme", system === "dark" ? "light" : "dark");
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">跳到正文</a>
+  <!-- 开场：OP 的缩写版。没有 JS 或减少动效时不出现 -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <canvas class="intro-canvas" id="intro-canvas"></canvas>
+    <div class="intro-sea" id="intro-sea"></div>
+    <p class="intro-line"><span id="intro-typed"></span><span class="caret"></span><span class="intro-enter" id="intro-enter">⏎</span></p>
+    <p class="intro-hello" id="intro-hello">你好。</p>
+    <button class="intro-skip" id="intro-skip" type="button" tabindex="-1">跳过</button>
+  </div>
+
+  <header class="bar">
+    <p class="bar-path"><span class="prompt">~/liu-ling</span> <span class="bar-cmd">$ run --week <span id="bar-week">··</span></span></p>
+    <div class="bar-actions">
+      <div class="player" id="player" hidden>
+        <button class="play" id="play" type="button" aria-label="播放音乐"><span class="play-icon" aria-hidden="true">♪</span><span class="mini-progress" aria-hidden="true"><i id="mini-progress"></i></span></button>
+        <button class="music-toggle" id="music-toggle" type="button" aria-label="展开音乐信息" aria-expanded="false" aria-controls="music-panel">⌄</button>
+        <div class="music-panel" id="music-panel" hidden>
+          <p class="player-title" id="music-title">音乐</p>
+          <p class="player-note" id="music-note" hidden></p>
+          <input class="seek" id="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="播放进度" disabled>
+          <p class="player-time mono"><span id="player-now">0:00</span> / <span id="player-dur">—</span></p>
+          <p class="player-status" id="music-status" role="status"></p>
+        </div>
+        <audio id="audio" preload="none"></audio>
+      </div>
+      <button class="theme" id="theme" type="button" aria-label="切换明暗">
+        <span class="theme-dot" aria-hidden="true"></span><span id="theme-label">跟随系统</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- 开场之后的首屏 -->
+    <section class="hero" aria-labelledby="name">
+      <div class="hero-text">
+        <p class="eyebrow"><span class="mono">&gt; hello, world</span><span class="eyebrow-sep">/</span><span>你好，世界</span></p>
+        <h1 class="name" id="name">Liu Ling</h1>
+        <p class="tagline" id="tagline">把做了什么、做到没有，都摆在这里。</p>
+        <dl class="hero-meta">
+          <div><dt>上次运行</dt><dd class="mono" id="updated">未记录</dd></div>
+          <div><dt id="hero-period-label">最近记录</dt><dd class="mono" id="hero-status">还没有记录</dd></div>
+        </dl>
+        <p class="record-context" id="record-context" hidden></p>
+        <div class="hero-actions">
+          <a class="read-report" href="#report"><span id="report-link-label">查看验收记录</span> <span aria-hidden="true">↘</span></a>
+          <a href="#log">提交记录 <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="hero-hint">三个 AI 替我值班。把鼠标放在她们身上，或者点一下。</p>
+      </div>
+
+      <p class="vtitle" aria-hidden="true">你好　世界</p>
+
+      <div class="scrolls" id="scrolls">
+        <figure class="scroll" data-who="claude" tabindex="0">
+          <div class="scroll-paper">
+            <picture>
+              <source media="(max-width: 720px)" srcset="assets/claude-small.webp" type="image/webp">
+              <img src="assets/claude.webp" width="700" height="1400" alt="Claude：浅金长发、橙花发饰，捧着一枝橙花微笑">
+            </picture>
+            <div class="drift" aria-hidden="true"></div>
+          </div>
+          <figcaption><span class="seal">C</span><span class="vname">Claude</span></figcaption>
+          <p class="bubble" role="status"></p>
+        </figure>
+        <figure class="scroll scroll-center" data-who="deepseek" tabindex="0">
+          <div class="scroll-paper">
+            <picture>
+              <source media="(max-width: 720px)" srcset="assets/deepseek-small.webp" type="image/webp">
+              <img src="assets/deepseek.webp" width="733" height="1400" alt="DeepSeek：深蓝长发、鲸鱼发夹，仰头望向上方">
+            </picture>
+            <div class="drift" aria-hidden="true"></div>
+          </div>
+          <figcaption><span class="seal">D</span><span class="vname">DeepSeek</span></figcaption>
+          <p class="bubble" role="status"></p>
+        </figure>
+        <figure class="scroll" data-who="chatgpt" tabindex="0">
+          <div class="scroll-paper">
+            <picture>
+              <source media="(max-width: 720px)" srcset="assets/chatgpt-small.webp" type="image/webp">
+              <img src="assets/chatgpt.webp" width="705" height="1400" alt="ChatGPT：银白长发、墨绿缎带，托腮看书">
+            </picture>
+            <div class="drift" aria-hidden="true"></div>
+          </div>
+          <figcaption><span class="seal">G</span><span class="vname">ChatGPT</span></figcaption>
+          <p class="bubble" role="status"></p>
+        </figure>
+      </div>
+    </section>
+
+    <nav class="chapters" aria-label="运行日志目录">
+      <a href="#report"><span class="chapter-no" aria-hidden="true">01</span><span id="report-nav-label">验收记录</span></a>
+      <a href="#log"><span class="chapter-no" aria-hidden="true">02</span><span>提交记录</span></a>
+      <a href="#trend"><span class="chapter-no" aria-hidden="true">03</span><span>趋势</span></a>
+      <a href="#issues"><span class="chapter-no" aria-hidden="true">04</span><span>已知问题</span></a>
+      <a href="#principles"><span class="chapter-no" aria-hidden="true">05</span><span>运行原则</span></a>
+    </nav>
+
+    <!-- 01 测试报告：ChatGPT -->
+    <section class="sec" id="report" data-host="chatgpt" aria-labelledby="report-title">
+      <aside class="host">
+        <div class="host-face" aria-hidden="true"></div>
+        <p class="host-name">ChatGPT <span>reviewer</span></p>
+        <blockquote class="host-review" data-review="weeks"></blockquote>
+      </aside>
+      <div class="sec-body">
+        <header class="sec-head">
+          <span class="sec-no">01</span>
+          <h2 id="report-title">验收记录</h2>
+          <span class="sec-en">test report</span>
+        </header>
+        <p class="report-context" id="report-context" aria-live="polite"></p>
+        <p class="week-link-status" id="week-link-status" role="status" hidden></p>
+        <article class="week-record report-week" tabindex="-1">
+          <div id="latest-week-head" hidden></div>
+          <div class="code" id="report-body"></div>
+        </article>
+        <details class="past" id="past-weeks">
+          <summary>往周记录</summary>
+          <div class="past-body" id="past-body"></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 02 提交记录：Claude -->
+    <section class="sec" id="log" data-host="claude" aria-labelledby="log-title">
+      <aside class="host">
+        <div class="host-face" aria-hidden="true"></div>
+        <p class="host-name">Claude <span>reviewer</span></p>
+        <blockquote class="host-review" data-review="achievements"></blockquote>
+      </aside>
+      <div class="sec-body">
+        <header class="sec-head">
+          <span class="sec-no">02</span>
+          <h2 id="log-title">提交记录</h2>
+          <span class="sec-en">git log</span>
+        </header>
+        <div class="code" id="log-body"></div>
+      </div>
+    </section>
+
+    <!-- 03、04 在“海”里：DeepSeek -->
+    <div class="sea" id="sea">
+      <svg class="sea-edge top" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <filter id="soft-top" x="-5%" y="-40%" width="110%" height="180%"><feTurbulence type="fractalNoise" baseFrequency=".01 .05" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="24"/><feGaussianBlur stdDeviation="5"/></filter>
+          <filter id="bleed-top" x="-5%" y="-40%" width="110%" height="180%"><feTurbulence type="fractalNoise" baseFrequency=".006 .035" numOctaves="3" seed="7"/><feDisplacementMap in="SourceGraphic" scale="14"/><feGaussianBlur stdDeviation="1.2"/></filter>
+        </defs>
+        <path class="wash1" filter="url(#soft-top)" d="M-40 40C180 14 330 58 520 34S880 4 1060 28 1330 56 1480 24V150H-40Z"/>
+        <path class="wash2" filter="url(#soft-top)" d="M-40 80C200 56 360 94 560 72S900 46 1090 68 1340 92 1480 64V150H-40Z"/>
+        <path class="wash3" filter="url(#bleed-top)" d="M-40 116C220 98 380 126 590 110S930 90 1110 106 1350 124 1480 102V190H-40Z"/>
+      </svg>
+      <svg class="sea-edge bottom" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <filter id="soft-bottom" x="-5%" y="-40%" width="110%" height="180%"><feTurbulence type="fractalNoise" baseFrequency=".01 .05" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="24"/><feGaussianBlur stdDeviation="5"/></filter>
+          <filter id="bleed-bottom" x="-5%" y="-40%" width="110%" height="180%"><feTurbulence type="fractalNoise" baseFrequency=".006 .035" numOctaves="3" seed="13"/><feDisplacementMap in="SourceGraphic" scale="14"/><feGaussianBlur stdDeviation="1.2"/></filter>
+        </defs>
+        <path class="wash1" filter="url(#soft-bottom)" d="M-40 40C180 14 330 58 520 34S880 4 1060 28 1330 56 1480 24V150H-40Z"/>
+        <path class="wash2" filter="url(#soft-bottom)" d="M-40 80C200 56 360 94 560 72S900 46 1090 68 1340 92 1480 64V150H-40Z"/>
+        <path class="wash3" filter="url(#bleed-bottom)" d="M-40 116C220 98 380 126 590 110S930 90 1110 106 1350 124 1480 102V190H-40Z"/>
+      </svg>
+      <div class="sea-clip" aria-hidden="true"></div>
+      <section class="sec" id="trend" data-host="deepseek" aria-labelledby="trend-title">
+        <aside class="host">
+          <div class="host-face" aria-hidden="true"></div>
+          <p class="host-name">DeepSeek <span>reviewer</span></p>
+          <blockquote class="host-review" data-review="trend"></blockquote>
+        </aside>
+        <div class="sec-body">
+          <header class="sec-head">
+            <span class="sec-no">03</span>
+            <h2 id="trend-title">趋势</h2>
+            <span class="sec-en">blocks / week</span>
+          </header>
+          <div class="chart" id="trend-body"></div>
+        </div>
+      </section>
+
+      <div class="whale-lane" aria-hidden="true"><svg class="whale" viewBox="0 0 240 90" aria-hidden="true"><path d="M8 52c10-22 38-34 74-32 30 2 56 14 74 26 12-4 22-12 30-24 4 10 2 20-4 28 10-2 22 0 34 6-14 4-26 10-34 18-6 6-14 8-22 6-24 14-62 18-96 10C34 84 14 72 8 52Z"/><circle cx="44" cy="46" r="2.6"/></svg></div>
+
+      <section class="sec" id="issues" data-host="deepseek" aria-labelledby="issues-title">
+        <aside class="host host-quiet">
+          <blockquote class="host-review" data-review="issues"></blockquote>
+        </aside>
+        <div class="sec-body">
+          <header class="sec-head">
+            <span class="sec-no">04</span>
+            <h2 id="issues-title">已知问题</h2>
+            <span class="sec-en">issues</span>
+          </header>
+          <p class="sec-lede">毛病不藏起来。每一个都配一条能执行的制度，改好了就关掉。</p>
+          <div class="code" id="issues-body"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 05 运行原则：回到纸上 -->
+    <section class="principles" id="principles" aria-labelledby="principles-title">
+      <header class="sec-head">
+        <span class="sec-no">05</span>
+        <h2 id="principles-title">运行原则</h2>
+        <span class="sec-en">principles</span>
+      </header>
+      <ol class="principle-list" id="principles-body"></ol>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="foot-hello">
+      <p class="foot-big">下一次运行，<br>下周日。</p>
+      <p class="foot-review" data-review="footer"></p>
+    </div>
+    <div class="foot-line">
+      <p class="mono">数据每周日更新 · 没有记下来的，不补成一个漂亮的数字</p>
+      <div class="foot-actions">
+        <a class="back-top" href="#top">回到页首 <span aria-hidden="true">↑</span></a>
+        <button class="tiny-whale" id="tiny-whale" type="button" aria-label="鲸鱼">
+          <svg viewBox="0 0 60 30" aria-hidden="true"><path d="M3 18c3-8 13-12 25-11 10 1 18 5 23 9 4-1 6-4 8-8 1 4 0 7-2 10 3-1 6 0 8 2-4 1-7 3-9 6-2 2-5 3-8 2-8 4-20 5-31 2-8-2-13-6-14-12Z"/></svg>
+          <span class="spout" aria-hidden="true"><i></i><i></i><i></i></span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <noscript><p class="noscript">这份运行日志用 JavaScript 读取 data.json；请启用后查看统计。</p></noscript>
+  <script src="app.js" defer></script>
+</body>
+</html>
