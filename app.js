@@ -78,7 +78,8 @@
   function gap(box) { box.appendChild(el("div", "gap")); }
 
   var STATUS = [["health", "作息与体能"], ["math", "数学独立掌握"], ["delivery", "有人验收的交付"]];
-  var weekCounts = {}, lastWeeks = [], periodDay = "", weekJumpFrame = 0;
+  var weekCounts = {}, lastWeeks = [], periodDay = "", recordJumpFrame = 0;
+  var archiveItems = [], archiveButtons = [], entryKeyCounts = Object.create(null), entriesById = Object.create(null);
   function statusOf(w, key) {
     var s = isObj(w.statuses) ? w.statuses[key] : undefined;
     return s === "passed" || s === "failed" || s === "unrated" ? s : "none";
@@ -137,7 +138,7 @@
     hs.appendChild(span(f ? "bad" : "", f + " failed")); hs.appendChild(document.createTextNode(" · "));
     hs.appendChild(span(null, u + " 未评"));
     var r = rate(latest.blocks);
-    if (r != null) { hs.appendChild(document.createTextNode(" · ")); hs.appendChild(span(null, "计划完成 " + r + "%")); }
+    if (r != null) { hs.appendChild(document.createTextNode(" · ")); hs.appendChild(span(null, "已记录计划块 " + frac(count(latest.blocks)) + " · " + r + "%")); }
   }
   function recordHead(node, w) {
     var id = weekId(w);
@@ -308,32 +309,90 @@
     });
   }
 
+  function entryKey(a) {
+    var identity = JSON.stringify([str(a.date), str(a.type) || "未分类", str(a.title) || "未命名提交"]).normalize("NFC");
+    var hash = 2166136261;
+    for (var i = 0; i < identity.length; i++) { hash ^= identity.charCodeAt(i); hash = Math.imul(hash, 16777619); }
+    return "entry-" + (validDate(a.date) ? a.date : "undated") + "-" + (hash >>> 0).toString(36);
+  }
+  function applyEntryFilter(type, fromButton) {
+    var visible = [];
+    archiveItems.forEach(function (item) {
+      item.node.hidden = type !== null && item.type !== type;
+      item.node.classList.remove("is-last-visible");
+      if (!item.node.hidden) visible.push(item.node);
+    });
+    if (visible.length) visible[visible.length - 1].classList.add("is-last-visible");
+    archiveButtons.forEach(function (button) { button.node.setAttribute("aria-pressed", String(button.type === type)); });
+    $("#archive-status").textContent = type === null ? "显示全部 " + visible.length + " 条记录" : "显示“" + type + "” " + visible.length + " 条记录";
+    if (fromButton) {
+      $("#entry-link-status").hidden = true;
+      var selected = entriesById[location.hash.slice(1)];
+      if (location.hash.indexOf("#entry-") === 0 && (!selected || selected.hidden)) {
+        history.replaceState(null, "", "#log");
+        $$(".commit-entry.is-selected").forEach(function (n) { n.classList.remove("is-selected"); });
+      }
+    }
+  }
   function renderLog(items) {
     var box = $("#log-body");
     box.textContent = "";
-    line(box, [["c-cmd", "$ "], el("b", null, "git log"), ["c-cmd", " --oneline --reverse-chronological"]]);
+    archiveItems = []; archiveButtons = [];
+    entryKeyCounts = Object.create(null); entriesById = Object.create(null);
+    var filters = $("#archive-filters"); filters.textContent = "";
+    $("#archive-tools").hidden = !items.length; $("#entry-link-status").hidden = true;
+    $("#log-link-label").textContent = items.length ? "查看 " + items.length + " 条成果" : "提交记录";
+    line(box, [["c-cmd", "$ "], el("b", null, "git log"), ["c-cmd", " --oneline"]]);
     gap(box);
     if (!items.length) {
       line(box, [["c-dim", "nothing to commit, working tree clean"]]);
       line(box, [["c-dim", "# 这段时间还没有新成果。有就有，没有就没有。"]]);
       return;
     }
+    var categories = new Map();
     items.forEach(function (a) {
-      var entry = el("div", "commit-entry");
+      var key = entryKey(a), type = (str(a.type) || "未分类").normalize("NFC");
+      entryKeyCounts[key] = (entryKeyCounts[key] || 0) + 1;
+      categories.set(type, (categories.get(type) || 0) + 1);
+    });
+    var dates = items.map(function (a) { return validDate(a.date) ? a.date : ""; }).filter(Boolean).sort();
+    $("#archive-overview").textContent = items.length + " 条记录" + (dates.length ? " · " + dates[0] + (dates[0] === dates[dates.length - 1] ? "" : " — " + dates[dates.length - 1]) : " · 日期未记录");
+    filters.hidden = categories.size < 2;
+    function filterButton(type, label, total) {
+      var button = el("button"); button.type = "button";
+      button.appendChild(span(null, label)); button.appendChild(document.createTextNode(" "));
+      button.appendChild(span("archive-filter-count", String(total)));
+      button.addEventListener("click", function () { applyEntryFilter(type, true); });
+      filters.appendChild(button); archiveButtons.push({ type: type, node: button });
+    }
+    filterButton(null, "全部", items.length);
+    categories.forEach(function (total, type) { filterButton(type, type === "全部" ? "全部（分类）" : type, total); });
+    items.forEach(function (a) {
+      var key = entryKey(a), type = (str(a.type) || "未分类").normalize("NFC"), title = str(a.title) || "未命名提交";
+      var entry = el("article", "commit-entry"); entry.tabIndex = -1;
+      entry.setAttribute("aria-label", "成果记录：" + title);
+      if (entryKeyCounts[key] === 1) { entry.id = key; entriesById[key] = entry; }
+      archiveItems.push({ type: type, node: entry });
       box.appendChild(entry);
-      var row = line(entry, [["hash", mmdd(a.date) + " "]], "commit");
-      var s = row.firstChild;
-      if (str(a.type)) s.appendChild(span("tag", a.type));
+      var meta = el("div", "commit-meta"), date = el("time", "hash", validDate(a.date) ? a.date : "日期未记录");
+      if (validDate(a.date)) date.dateTime = a.date;
+      meta.appendChild(date); meta.appendChild(span("tag", type));
+      if (entry.id) {
+        var permalink = el("a", "entry-permalink", "此条链接 ↗"); permalink.href = "#" + entry.id;
+        permalink.setAttribute("aria-label", "成果链接：" + title); meta.appendChild(permalink);
+      } else meta.appendChild(span("entry-unlinked", "此条无法单独定位"));
       var url = safeUrl(a.url);
-      var t;
+      var heading = el("h3", "title");
       if (url) {
-        t = el("a", "title", str(a.title) || "未命名提交");
-        t.href = url;
-        if (/^https?:/i.test(url)) { t.target = "_blank"; t.rel = "noopener noreferrer"; }
-      } else t = span("title", str(a.title) || "未命名提交");
-      s.appendChild(t);
+        var resource = el("a", null, title); resource.href = url;
+        if (/^https?:/i.test(url)) { resource.target = "_blank"; resource.rel = "noopener noreferrer"; }
+        heading.appendChild(resource);
+      } else heading.textContent = title;
+      var row = el("div", "ln commit"), content = el("div", "commit-content");
+      content.appendChild(meta); content.appendChild(heading); row.appendChild(content); entry.appendChild(row);
       if (str(a.description)) line(entry, [["zh c-dim", a.description]], "commit-note");
     });
+    applyEntryFilter(null, false);
   }
 
   function chartControls(box, weeks) {
@@ -347,7 +406,7 @@
       var option = el("option", null, weekRange(w) + " · " + (future ? "预录" : !validWeekRange(w) ? "日期待核对" : r == null ? "未记录" : r + "%"));
       option.value = "#" + weekId(w); select.appendChild(option);
     });
-    select.addEventListener("change", function () { var hash = select.value; select.value = ""; if (hash) goWeek(hash); });
+    select.addEventListener("change", function () { var hash = select.value; select.value = ""; if (hash) goRecord(hash); });
     label.appendChild(select); controls.appendChild(label);
     controls.appendChild(el("p", "chart-hint", "点选图中数据点，或选择一周查看原始记录。"));
     box.appendChild(controls);
@@ -481,13 +540,39 @@
     });
   }
 
-  /* 日期链接在数据读完后再定位，先展开折叠祖先，再转移焦点。 */
-  function openWeek() {
+  /* 章节与记录链接均在数据读完后定位；单条记录先恢复可见，再转移焦点。 */
+  function focusRecord(target, selected) {
+    var parent = target.parentElement;
+    while (parent) { if (parent.tagName === "DETAILS") parent.open = true; parent = parent.parentElement; }
+    if (selected !== false) target.classList.add("is-selected");
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+  }
+  function openRecord() {
     if (!lastData) return;
     var hash = location.hash, match = /^#week-(\d{4}-\d{2}-\d{2})$/.exec(hash), message = $("#week-link-status");
     message.hidden = true; message.textContent = "";
-    $$(".week-record.is-selected").forEach(function (n) { n.classList.remove("is-selected"); });
-    if (!match) return;
+    var entryMessage = $("#entry-link-status"); entryMessage.hidden = true; entryMessage.textContent = "";
+    $$(".week-record.is-selected, .commit-entry.is-selected").forEach(function (n) { n.classList.remove("is-selected"); });
+    if (hash.indexOf("#entry-") === 0) {
+      var entry = entriesById[hash.slice(1)];
+      if (entry) {
+        if (entry.hidden) applyEntryFilter(null, false);
+        focusRecord(entry);
+      } else {
+        applyEntryFilter(null, false);
+        entryMessage.textContent = entryKeyCounts[hash.slice(1)] > 1 ? "这条链接对应多条记录，请在列表中查看。" : "没有找到这条成果记录，内容可能已更名或尚未公开。";
+        entryMessage.hidden = false; entryMessage.tabIndex = -1; focusRecord(entryMessage, false);
+      }
+      return;
+    }
+    if (!match) {
+      var section = document.getElementById(hash.slice(1));
+      if (section && section.matches(".sec, .principles")) {
+        section.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+      }
+      return;
+    }
     var target = document.getElementById(hash.slice(1));
     if (!target) {
       message.textContent = weekCounts[match[1]] > 1 ? "该日期有重复周报，无法定位唯一记录。请查看周报档案并核对数据。" : "没有找到 " + match[1] + " 的周报，该记录可能尚未公开。";
@@ -495,31 +580,29 @@
       if (weekCounts[match[1]] > 1) $("#past-weeks").open = true;
       return;
     }
-    var parent = target.parentElement;
-    while (parent) { if (parent.tagName === "DETAILS") parent.open = true; parent = parent.parentElement; }
-    target.classList.add("is-selected"); target.focus({ preventScroll: true });
-    target.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+    focusRecord(target);
   }
-  function queueWeek() {
-    if (weekJumpFrame) cancelAnimationFrame(weekJumpFrame);
-    weekJumpFrame = requestAnimationFrame(function () { weekJumpFrame = 0; openWeek(); });
+  function queueRecord() {
+    if (recordJumpFrame) cancelAnimationFrame(recordJumpFrame);
+    recordJumpFrame = requestAnimationFrame(function () { recordJumpFrame = 0; openRecord(); });
   }
-  function goWeek(hash) {
+  function goRecord(hash) {
     if (location.hash !== hash) history.pushState(null, "", hash);
-    queueWeek();
+    queueRecord();
   }
   document.addEventListener("click", function (e) {
-    var link = e.target.closest && e.target.closest("a[href^='#week-']");
+    var link = e.target.closest && e.target.closest("a[href^='#week-'], a[href^='#entry-']");
     if (!link || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault(); goWeek(link.getAttribute("href"));
+    e.preventDefault(); goRecord(link.getAttribute("href"));
   });
-  window.addEventListener("hashchange", queueWeek);
-  window.addEventListener("popstate", queueWeek);
+  window.addEventListener("hashchange", queueRecord);
+  window.addEventListener("popstate", queueRecord);
   function refreshPeriod() {
     if (!lastData || todayInShanghai() === periodDay) return;
     var wasOpen = $("#past-weeks").open, period = periodOf(lastWeeks);
     showPeriod(period); renderReport(lastWeeks, period.lead); renderTrend(lastWeeks);
-    $("#past-weeks").open = wasOpen; queueWeek();
+    $("#past-weeks").open = wasOpen;
+    if (location.hash.indexOf("#week-") === 0) queueRecord();
   }
   window.addEventListener("focus", refreshPeriod);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) refreshPeriod(); });
@@ -754,7 +837,7 @@
   function intro() {
     var box = $("#intro");
     if (!box) return;
-    if (reduced || /[?&]intro=0\b/.test(location.search) || /^#week-\d{4}-\d{2}-\d{2}$/.test(location.hash)) { box.classList.add("gone"); return; }
+    if (reduced || /[?&]intro=0\b/.test(location.search) || /^#week-\d{4}-\d{2}-\d{2}$/.test(location.hash) || /^#entry-/.test(location.hash)) { box.classList.add("gone"); return; }
     var seen = store("showcase-visited") === "1";
     var cv = $("#intro-canvas"), ctx = cv.getContext && cv.getContext("2d");
     if (!ctx) { box.classList.add("gone"); return; }
@@ -903,7 +986,9 @@
       introData = data;
       data = render(data);
       lastData = data; lastW = ($("#trend-body") || {}).clientWidth || 0;
-      queueWeek();
+      queueRecord();
+      // 本地字体加载也会改变换行和章节高度，字体稳定后按当前片段校正。
+      if (document.fonts) document.fonts.ready.then(queueRecord);
     })
     .catch(function (e) {
       render({});

@@ -73,7 +73,7 @@ body::before {
   background:
     radial-gradient(60vw 40vw at 85% 8%, var(--claude-soft), transparent 70%),
     radial-gradient(50vw 40vw at 5% 55%, var(--claude-soft), transparent 70%);
-  opacity: .4;
+  opacity: .22;
 }
 body::after {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: var(--grain);
@@ -130,7 +130,7 @@ button { font: inherit; color: inherit; }
 /* ---------- 首屏 ---------- */
 .hero {
   display: grid;
-  grid-template-columns: minmax(280px, 0.82fr) auto minmax(0, 1.5fr);
+  grid-template-columns: minmax(280px, .9fr) auto minmax(0, 1.5fr);
   align-items: center; gap: clamp(20px, 3vw, 48px);
   max-width: 1280px; margin: 0 auto;
   padding: clamp(28px, 5vh, 64px) var(--gutter-r) clamp(40px, 7vh, 96px) var(--gutter);
@@ -142,19 +142,19 @@ button { font: inherit; color: inherit; }
 .eyebrow .mono { color: var(--ink-2); }
 .eyebrow-sep { opacity: .5; }
 .name {
-  font: 500 clamp(64px, 8.4vw, 124px)/.9 var(--latin);
-  letter-spacing: -.015em; margin: 0 0 22px;
+  font: 400 clamp(64px, 8.6vw, 128px)/.94 var(--latin);
+  letter-spacing: -.025em; margin: 0 0 28px;
   overflow-wrap: anywhere;
 }
 .name.name-long { font-size: clamp(32px, 3.2vw, 46px); line-height: 1.05; }
 .tagline {
   font: 400 clamp(17px, 1.5vw, 20px)/1.85 var(--serif-zh);
-  margin: 0 0 30px; max-width: 26em; color: var(--ink); text-wrap: pretty;
+  margin: 0 0 32px; max-width: 26em; color: var(--ink); text-wrap: pretty;
 }
-.hero-meta { margin: 0 0 26px; display: grid; gap: 10px; }
-.hero-meta div { display: grid; grid-template-columns: 5.5em 1fr; gap: 12px; align-items: baseline; border-top: 1px solid var(--rule); padding-top: 10px; }
+.hero-meta { margin: 0 0 22px; padding-top: 16px; border-top: 1px solid var(--rule); display: grid; gap: 8px; }
+.hero-meta div { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 12px; align-items: baseline; }
 .hero-meta dt { font-size: 12px; color: var(--ink-3); letter-spacing: .08em; }
-.hero-meta dd { margin: 0; font-size: 13.5px; color: var(--ink); }
+.hero-meta dd { margin: 0; font-size: 12px; line-height: 1.9; color: var(--ink-2); }
 .hero-meta .ok { color: var(--gpt); }
 .hero-meta .bad { color: var(--fail); }
 #hero-status > span { white-space: nowrap; }
@@ -177,11 +177,11 @@ button { font: inherit; color: inherit; }
   padding: 0 var(--gutter-r) 0 var(--gutter);
 }
 .chapters a {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
-  padding: 18px 8px 18px 0; border-block: 1px solid var(--rule);
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 22px 8px 22px 0; border-block: 1px solid var(--rule);
   color: var(--ink-2); font: 13px/1.5 var(--sans); text-decoration: none;
 }
-.chapter-no { font: 11px/1 var(--mono); color: var(--ink-3); }
+.chapter-no { font: 400 28px/1 var(--latin); color: var(--ink-3); }
 .chapters a > span:last-child { border-bottom: 1px solid transparent; transition: border-color .2s; }
 .chapters a:hover { color: var(--ink); }
 .chapters a:hover > span:last-child { border-color: currentColor; }
@@ -277,10 +277,10 @@ figcaption {
 
 /* ---------- 区块通用 ---------- */
 .sec {
-  display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: clamp(28px, 5vw, 72px);
+  display: grid; grid-template-columns: 164px minmax(0, 1fr); gap: clamp(32px, 5vw, 64px);
   max-width: 1120px; margin: 0 auto; padding: clamp(64px, 10vh, 120px) var(--gutter-r) clamp(40px, 6vh, 72px) var(--gutter);
   position: relative;
-  scroll-margin-top: 20px;
+  scroll-margin-top: 96px;
 }
 .sec[data-host="claude"] { --c: var(--claude); --cs: var(--claude-soft); --face: url("assets/face-claude.webp"); }
 .sec[data-host="chatgpt"] { --c: var(--gpt); --cs: var(--gpt-soft); --face: url("assets/face-chatgpt.webp"); }
@@ -288,38 +288,38 @@ figcaption {
 
 .host { position: static; align-self: start; }
 .host-face {
-  width: 128px; height: 156px; margin-bottom: 16px;
+  width: 104px; height: 126.75px; margin-bottom: 20px;
   background: var(--face) center / cover no-repeat, var(--paper-2);
   border-radius: 58% 42% 52% 48% / 46% 56% 44% 54%;
   filter: var(--img-filter);
   box-shadow: 0 0 0 6px var(--cs);
 }
-.host-name { margin: 0 0 10px; font: 600 13px/1 var(--mono); color: var(--c); letter-spacing: .04em; }
+.host-name { margin: 0 0 10px; font: 600 12px/1.5 var(--mono); color: var(--c); letter-spacing: .04em; }
 .host-name span { font-weight: 400; color: var(--ink-3); margin-left: 6px; }
 .host-review {
   margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--c);
-  font: 15px/1.8 var(--serif-zh); color: var(--ink-2); text-wrap: pretty;
+  font: 14px/1.9 var(--serif-zh); color: var(--ink-2); text-wrap: pretty;
 }
 .host-review:empty { display: none; }
 .host-quiet { padding-top: 10px; }
 
-.sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 28px; }
-.sec .sec-head { border-bottom: 1px solid var(--rule); padding-bottom: 18px; margin-bottom: 24px; }
+.sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 32px; }
+.sec .sec-head { border-bottom: 1px solid var(--rule); padding-bottom: 22px; margin-bottom: 28px; }
 .sec .sec-en { margin-left: auto; }
-.sec-no { font: 500 13px/1 var(--mono); color: var(--c, var(--ink-3)); }
-.sec-head h2 { margin: 0; font: 700 clamp(28px, 3.2vw, 40px)/1.2 var(--serif-zh); letter-spacing: .04em; text-wrap: balance; }
-.sec-en { font: 12px/1 var(--mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .14em; }
+.sec-no { font: 400 clamp(44px, 5vw, 64px)/.9 var(--latin); color: var(--c, var(--ink-3)); letter-spacing: -.04em; }
+.sec-head h2 { margin: 0; font: 500 clamp(30px, 3.4vw, 46px)/1.25 var(--serif-zh); letter-spacing: .06em; text-wrap: balance; }
+.sec-en { font: 11px/1.5 var(--mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .14em; }
 .sec-lede { margin: -10px 0 26px; color: var(--ink-2); font-size: 15px; }
 
 /* 屏幕层：印在纸上的代码 */
 .code {
   font: 14px/1.95 var(--mono); color: var(--ink);
-  border-left: 2px solid var(--c); padding: 16px 16px 16px 0;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--c) 4%, transparent), transparent 85%);
+  border-left: 1px solid var(--c); padding: 18px 16px 18px 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c) 2%, transparent), transparent 85%);
   counter-reset: ln; min-width: 0;
 }
 .code .ln { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); align-items: baseline; }
-.code .ln::before { counter-increment: ln; content: counter(ln); color: var(--ink-3); opacity: .55; text-align: right; padding-right: 1.2em; font-size: 12px; }
+.code .ln::before { counter-increment: ln; content: counter(ln); color: var(--ink-3); opacity: .45; text-align: right; padding-right: 1.2em; font-size: 11px; }
 .code .ln > span { min-width: 0; overflow-wrap: anywhere; }
 .code .gap { height: .9em; }
 .c-cmd { color: var(--ink-2); }
@@ -332,7 +332,7 @@ figcaption {
 .c-c { color: var(--c); }
 .code .zh { font-family: var(--sans); }
 .code .serif { font-family: var(--serif-zh); font-size: 15px; color: var(--ink); line-height: 1.85; display: block; padding: 2px 0; }
-.code:not(.code-compact) > .ln:first-child > span { padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.code:not(.code-compact) > .ln:first-child > span { padding-bottom: 12px; margin-bottom: 8px; }
 .test-result > span { display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: 8px; align-items: baseline; padding-block: 4px; }
 .test-result .zh { display: flex; align-items: baseline; gap: 12px; }
 .test-result .zh::after { content: ""; flex: 1; border-bottom: 1px dotted var(--rule); }
@@ -370,15 +370,37 @@ figcaption {
 .past[open] > summary { color: var(--c); }
 
 /* 提交记录 */
-.commit-entry { padding: 18px 0; border-bottom: 1px solid var(--rule); }
-.commit-entry:last-child { border-bottom: 0; padding-bottom: 0; }
-.commit .hash { color: var(--c); }
-.commit .tag { display: inline-block; font-size: 11.5px; line-height: 1.5; padding: 0 7px; border: 1px solid var(--c); color: var(--c); border-radius: 999px; margin: 0 8px 0 4px; vertical-align: 1px; }
-.commit .title { display: block; margin: 8px 0 6px; font: 600 clamp(18px, 1.5vw, 22px)/1.6 var(--serif-zh); }
-.commit-note { font-size: 14px; line-height: 1.85; }
-.commit a.title { text-decoration: underline; text-decoration-color: var(--c); }
-.commit a.title:hover { text-decoration-thickness: 2px; }
-.commit a.title[target="_blank"]::after { content: " ↗"; font: 14px/1 var(--mono); }
+.archive-tools { margin: 0 0 22px; }
+.archive-overview { margin: 0 0 8px; color: var(--ink-2); font: 13px/1.8 var(--mono); }
+.archive-filters { display: flex; flex-wrap: wrap; gap: 4px 24px; border-bottom: 1px solid var(--rule); }
+.archive-tools[hidden], .archive-filters[hidden], .commit-entry[hidden] { display: none; }
+.archive-filters button {
+  display: inline-flex; align-items: center; gap: 10px; min-width: 44px; min-height: 44px; max-width: 100%;
+  padding: 8px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none;
+  color: var(--ink-2); font: 13px/1.5 var(--sans); cursor: pointer; overflow-wrap: anywhere;
+}
+.archive-filters button:hover { border-bottom-color: var(--rule); color: var(--ink); }
+.archive-filters button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--c); }
+.archive-filter-count { font: 11px/1 var(--mono); color: var(--ink-2); }
+.archive-status { margin: 12px 0 0; color: var(--ink-2); font: 12px/1.8 var(--sans); overflow-wrap: anywhere; }
+.entry-link-status { color: var(--fail); font: 14px/1.8 var(--sans); scroll-margin-top: 96px; }
+.commit-entry { padding: 26px 0; border-bottom: 1px solid var(--rule); }
+.commit-entry.is-last-visible { border-bottom: 0; padding-bottom: 0; }
+.commit-entry { scroll-margin-top: 96px; }
+.commit-content { min-width: 0; overflow-wrap: anywhere; }
+.commit-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.commit .hash { color: var(--ink-2); }
+.commit .tag { display: inline-block; max-width: 100%; font: 12px/1.6 var(--sans); color: var(--ink-2); }
+.commit .tag::before { content: "/"; padding-right: 8px; color: var(--ink-3); }
+.entry-permalink { margin-left: auto; font: 12px/1.7 var(--sans); color: var(--ink-2); text-decoration: none; padding-block: 5px; }
+.entry-permalink:hover { color: var(--ink); text-decoration: underline; }
+.entry-unlinked { margin-left: auto; color: var(--ink-dim); font: 12px/1.7 var(--sans); }
+.commit .title { display: block; margin: 12px 0 10px; font: 500 clamp(20px, 1.8vw, 26px)/1.5 var(--serif-zh); }
+.commit-note { font-size: 15px; line-height: 1.9; }
+.commit .title a { text-decoration: underline; text-decoration-color: var(--c); }
+.commit .title a:hover { text-decoration-thickness: 2px; }
+.commit .title a[target="_blank"]::after { content: " ↗"; font: 14px/1 var(--mono); }
+.commit-entry.is-selected .commit-meta { border-bottom: 1px solid var(--c); padding-bottom: 8px; }
 
 /* ---------- 海 ---------- */
 .sea {
@@ -438,16 +460,17 @@ figcaption {
 .issue .st-closed { color: var(--gpt); text-decoration: line-through; }
 
 /* ---------- 原则：竖排挂轴 ---------- */
-.principles { max-width: 1120px; margin: 0 auto; padding: clamp(72px, 12vh, 140px) var(--gutter-r) 40px var(--gutter); scroll-margin-top: 20px; }
+.principles { max-width: 1120px; margin: 0 auto; padding: clamp(72px, 12vh, 140px) var(--gutter-r) 40px var(--gutter); scroll-margin-top: 96px; }
 .principles .sec-head { justify-content: center; text-align: center; }
 .principle-list {
-  list-style: none; margin: 18px auto 0; padding: 0; counter-reset: p;
-  display: flex; flex-direction: row-reverse; justify-content: center; gap: clamp(28px, 5vw, 72px);
+  list-style: none; margin: 36px auto 0; padding: 40px 0; border-block: 1px solid var(--rule); counter-reset: p;
+  display: flex; flex-direction: row-reverse; flex-wrap: wrap; justify-content: center; gap: clamp(28px, 5vw, 72px);
 }
 .principle-list li {
   writing-mode: vertical-rl; counter-increment: p;
-  font: 400 clamp(20px, 2vw, 26px)/1.9 var(--serif-zh); letter-spacing: .14em;
+  font: 400 clamp(22px, 2vw, 28px)/1.9 var(--serif-zh); letter-spacing: .1em;
   max-height: 420px; position: relative; padding-top: 34px;
+  text-wrap: balance; overflow-wrap: anywhere;
 }
 .principle-list li::before {
   content: counter(p, cjk-decimal); position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -460,7 +483,8 @@ figcaption {
 
 /* ---------- 页脚 ---------- */
 .foot { max-width: 1120px; margin: 0 auto; padding: clamp(60px, 10vh, 120px) var(--gutter-r) max(40px, env(safe-area-inset-bottom, 0px)) var(--gutter); display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px 64px; align-items: end; }
-.foot-big { margin: 0 0 14px; font: 700 clamp(30px, 3.6vw, 48px)/1.35 var(--serif-zh); letter-spacing: .06em; }
+.foot-hello { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px 64px; align-items: end; }
+.foot-big { margin: 0; font: 400 clamp(36px, 4.2vw, 58px)/1.4 var(--serif-zh); letter-spacing: .06em; }
 .foot-review { margin: 0; font: 15px/1.8 var(--serif-zh); color: var(--ink-2); border-left: 2px solid var(--ds); padding-left: 14px; }
 .foot-review:empty { display: none; }
 .player { position: static; display: flex; align-items: center; flex: 0 0 auto; }
@@ -564,8 +588,10 @@ figcaption {
 @media (max-width: 720px) {
   body { font-size: 15px; }
   .bar-cmd { display: none; }
-  .hero { padding-top: 26px; }
-  .name { font-size: clamp(56px, 17vw, 80px); }
+  .hero { padding-top: 32px; gap: 36px; }
+  .name { font-size: clamp(64px, 19vw, 88px); margin-bottom: 24px; }
+  .chapters a { flex-direction: column; align-items: flex-start; gap: 8px; padding-block: 18px; font-size: 12px; }
+  .chapter-no { font-size: 24px; }
   .scrolls { gap: 6px; grid-template-columns: 1fr 1.1fr 1fr; }
   .scroll-paper { aspect-ratio: .6; }
   figcaption { padding-left: 4%; gap: 6px; font-size: 10px; }
@@ -574,21 +600,34 @@ figcaption {
   .scroll[data-who="claude"] .bubble { left: 10%; transform: translate(0, -8px); }
   .scroll[data-who="chatgpt"] .bubble { left: auto; right: 0; transform: translate(0, -8px); }
   .scroll[data-who="claude"]:hover .bubble, .scroll[data-who="claude"].on .bubble, .scroll[data-who="chatgpt"]:hover .bubble, .scroll[data-who="chatgpt"].on .bubble { transform: translate(0, 0); }
-  .sec { grid-template-columns: 1fr; gap: 22px; padding-top: 64px; }
-  .host { position: static; display: grid; grid-template-columns: 64px 1fr; gap: 6px 14px; align-items: center; }
-  .host-face { width: 64px; height: 76px; margin: 0; grid-row: span 2; box-shadow: 0 0 0 4px var(--cs); }
+  .sec { grid-template-columns: 1fr; gap: 18px; padding-top: 56px; }
+  .sec-head { gap: 8px 12px; }
+  .sec .sec-head { padding-bottom: 16px; margin-bottom: 20px; }
+  .sec-no { font-size: 38px; }
+  .sec-head h2 { font-size: 30px; letter-spacing: .04em; }
+  .sec-en { font-size: 10px; letter-spacing: .1em; }
+  .host { position: static; display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 6px 14px; align-items: center; }
+  .host-face { width: 52px; height: 61.75px; margin: 0; grid-row: span 2; box-shadow: 0 0 0 4px var(--cs); }
   .host-name { margin: 0; }
-  .host-review { font-size: 14px; }
+  .host-review { font-size: 13px; line-height: 1.8; padding-left: 10px; }
   .host-quiet { display: block; padding: 0; }
   .code { font-size: 14px; padding-right: 0; }
-  .code .ln { grid-template-columns: 2.4em minmax(0, 1fr); }
+  .code .ln { grid-template-columns: 2em minmax(0, 1fr); }
+  .code .ln::before { padding-right: .8em; }
+  .archive-tools { margin-bottom: 16px; }
+  .archive-overview { font-size: 12px; }
+  .archive-status { margin-top: 8px; }
+  .commit-entry { padding-block: 22px; }
+  .commit .title { margin-block: 10px 8px; font-size: 20px; }
+  .commit-note { font-size: 14px; }
   .cells { grid-template-columns: repeat(var(--cell-cols, 25), minmax(0, 1fr)); gap: 3px; max-width: calc(var(--cell-cols, 25) * 14px - 3px); }
   .cells i { width: 100%; height: auto; aspect-ratio: 1; }
-  .principle-list { flex-direction: column; gap: 18px; }
+  .principle-list { flex-direction: column; gap: 22px; padding-block: 28px; margin-top: 28px; }
   .principle-list li { writing-mode: horizontal-tb; max-height: none; padding: 0 0 0 30px; font-size: 18px; letter-spacing: .04em; }
   .principle-list li::before { left: 0; top: .55em; transform: none; }
   .principles .sec-head { justify-content: flex-start; text-align: left; }
-  .foot { grid-template-columns: 1fr; }
+  .foot, .foot-hello { grid-template-columns: 1fr; }
+  .foot-hello { gap: 24px; }
   .foot-line { align-items: flex-start; flex-wrap: wrap; }
   .foot-actions { width: 100%; justify-content: space-between; }
   .whale-lane { position: relative; inset: auto; height: 90px; }
@@ -601,3 +640,6 @@ figcaption {
   .drift { display: none; }
   .js .intro { display: none; }
 }
+
+/* Cormorant 默认是旧式数字，“01”会读成“OI”；章节编号和大数字改用等高数字 */
+.sec-no, .chapter-no, .big-rate .num { font-variant-numeric: lining-nums; }

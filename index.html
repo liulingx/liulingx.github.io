@@ -80,7 +80,7 @@
         <p class="record-context" id="record-context" hidden></p>
         <div class="hero-actions">
           <a class="read-report" href="#report"><span id="report-link-label">查看验收记录</span> <span aria-hidden="true">↘</span></a>
-          <a href="#log">提交记录 <span aria-hidden="true">→</span></a>
+          <a href="#log"><span id="log-link-label">提交记录</span> <span aria-hidden="true">→</span></a>
         </div>
         <p class="hero-hint">三个 AI 替我值班。把鼠标放在她们身上，或者点一下。</p>
       </div>
@@ -171,6 +171,12 @@
           <h2 id="log-title">提交记录</h2>
           <span class="sec-en">git log</span>
         </header>
+        <div class="archive-tools" id="archive-tools" hidden>
+          <p class="archive-overview" id="archive-overview"></p>
+          <div class="archive-filters" id="archive-filters" role="group" aria-label="按成果分类"></div>
+          <p class="archive-status" id="archive-status" role="status"></p>
+        </div>
+        <p class="entry-link-status" id="entry-link-status" role="status" hidden></p>
         <div class="code" id="log-body"></div>
       </div>
     </section>

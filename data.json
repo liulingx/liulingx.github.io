@@ -17,7 +17,7 @@
       "name": "ChatGPT",
       "line": "先把证据摆出来，再说结论。",
       "reviews": {
-        "weeks": "计划块从周六才开始记，只有一天：5 块做完，2 块做了一半。数字少，先如实摆着。"
+        "weeks": "计划块从周六才开始记，只有一天：6 块做完，2 块做了一半。数字少，先如实摆着。"
       }
     },
     "deepseek": {
@@ -40,8 +40,8 @@
         "delivery": "passed"
       },
       "blocks": {
-        "done": 5,
-        "total": 7
+        "done": 6,
+        "total": 8
       },
       "writing": {
         "done": 1,
