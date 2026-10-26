@@ -238,7 +238,7 @@
     latestHead.appendChild(recordHead(latestRecord, w));
     var cmd = span("c-cmd", "$ ");
     var b = el("b", null, "pytest");
-    line(box, [cmd, b, ["c-cmd", " week --from "], ["c-date", mmdd(w.start)], ["c-cmd", " --to "], ["c-date", mmdd(w.end)]]);
+    line(box, [cmd, b, ["c-cmd", " week --from "], ["c-date", mmdd(w.start)], ["c-cmd", " --to "], ["c-date", mmdd(w.end)]], "report-command");
     gap(box);
     var p = 0, f = 0, u = 0;
     STATUS.forEach(function (s) {
@@ -248,13 +248,13 @@
       if (v === "passed") p++; else if (v === "failed") f++; else u++;
       line(box, [mark, ["zh", s[1]], word], "test-result");
     });
-    line(box, [["c-ok", p + " passed"], ["c-dim", ", "], [f ? "c-bad" : "c-dim", f + " failed"], ["c-dim", ", " + u + " unrated"]]);
+    line(box, [["c-ok", p + " passed"], ["c-dim", ", "], [f ? "c-bad" : "c-dim", f + " failed"], ["c-dim", ", " + u + " unrated"]], "report-summary");
     gap(box);
 
     // 计划块：一格一块
     var c = count(w.blocks);
     var r = rate(w.blocks);
-    var rateRow = line(box, [["c-dim", "# 计划块：一格是一块，填上的是做完的"]]);
+    line(box, [["c-dim", "# 计划块：一格是一块，填上的是做完的"]], "report-rate-label");
     var big = el("div", "big-rate");
     var num = el("span", "num");
     num.textContent = r == null ? "—" : String(r);
@@ -264,7 +264,7 @@
     var cells = el("div", "cells");
     cells.style.setProperty("--cell-cols", c && c.total ? Math.min(c.total, 25) : 25);
     if (c && c.total) for (var i = 0; i < Math.min(c.total, 60); i++) { var ci = el("i"); if (c.done != null && i < c.done) ci.className = "f"; cells.appendChild(ci); }
-    var holder = el("div", "ln");
+    var holder = el("div", "ln report-rate");
     var inner = el("span");
     inner.appendChild(big);
     if (c && c.total) inner.appendChild(cells);
@@ -274,14 +274,13 @@
 
     [["writing", "早写作"], ["strength", "力量"], ["run", "跑步"]].forEach(function (k) {
       var cc = count(w[k[0]]);
-      line(box, [["zh", k[1] + " "], ["c-dim", "·".repeat(5 - k[1].length) + " "], dots(cc), ["c-dim", frac(cc) ? "  " + frac(cc) : ""]]);
+      line(box, [["zh", k[1] + " "], ["c-dim", "·".repeat(5 - k[1].length) + " "], dots(cc), ["c-dim", frac(cc) ? "  " + frac(cc) : ""]], "report-habit");
     });
     if (str(w.note)) {
       gap(box);
-      line(box, [["c-dim", "# 备注"]]);
-      line(box, [["serif", w.note]]);
+      line(box, [["c-dim", "# 备注"]], "report-note-label");
+      line(box, [["serif", w.note]], "report-note");
     }
-    void rateRow;
 
     // 往周
     var past = weeks.filter(function (pw) { return pw !== w; });

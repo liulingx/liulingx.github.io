@@ -10,15 +10,20 @@
   <meta property="og:title" content="Liu Ling · 你好，世界">
   <meta property="og:description" content="近期成果和每周复盘，做到没做到都摆在这里。三个 AI 替他盯着，你也可以。">
   <meta property="og:image" content="https://liulingx.github.io/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Liu Ling 的运行日志，暖纸色上的 Claude、DeepSeek 与 ChatGPT 三联画">
   <meta property="og:url" content="https://liulingx.github.io/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Liu Ling · 你好，世界">
   <meta name="twitter:description" content="近期成果和每周复盘，做到没做到都摆在这里。">
   <meta name="twitter:image" content="https://liulingx.github.io/assets/og.png">
+  <meta name="twitter:image:alt" content="Liu Ling 的运行日志，三幅原水彩画像">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/deepseek.webp" as="image" type="image/webp">
+  <link rel="preload" href="assets/deepseek.webp" as="image" type="image/webp" media="(min-width: 721px)" fetchpriority="high">
+  <link rel="preload" href="assets/deepseek-small.webp" as="image" type="image/webp" media="(max-width: 720px)" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
   <script>
     // 主题在首帧前定下来，避免闪一下
@@ -72,19 +77,9 @@
       <div class="hero-text">
         <p class="eyebrow"><span class="mono">&gt; hello, world</span><span class="eyebrow-sep">/</span><span>你好，世界</span></p>
         <h1 class="name" id="name">Liu Ling</h1>
-        <p class="tagline" id="tagline">把做了什么、做到没有，都摆在这里。</p>
-        <dl class="hero-meta">
-          <div><dt>上次运行</dt><dd class="mono" id="updated">未记录</dd></div>
-          <div><dt id="hero-period-label">最近记录</dt><dd class="mono" id="hero-status">还没有记录</dd></div>
-        </dl>
-        <p class="record-context" id="record-context" hidden></p>
-        <div class="hero-actions">
-          <a class="read-report" href="#report"><span id="report-link-label">查看验收记录</span> <span aria-hidden="true">↘</span></a>
-          <a href="#log"><span id="log-link-label">提交记录</span> <span aria-hidden="true">→</span></a>
-        </div>
-        <p class="hero-hint">三个 AI 替我值班。把鼠标放在她们身上，或者点一下。</p>
       </div>
 
+      <div class="hero-stage">
       <p class="vtitle" aria-hidden="true">你好　世界</p>
 
       <div class="scrolls" id="scrolls">
@@ -103,7 +98,7 @@
           <div class="scroll-paper">
             <picture>
               <source media="(max-width: 720px)" srcset="assets/deepseek-small.webp" type="image/webp">
-              <img src="assets/deepseek.webp" width="733" height="1400" alt="DeepSeek：深蓝长发、鲸鱼发夹，仰头望向上方">
+              <img src="assets/deepseek.webp" width="733" height="1400" fetchpriority="high" decoding="async" alt="DeepSeek：深蓝长发、鲸鱼发夹，仰头望向上方">
             </picture>
             <div class="drift" aria-hidden="true"></div>
           </div>
@@ -121,6 +116,23 @@
           <figcaption><span class="seal">G</span><span class="vname">ChatGPT</span></figcaption>
           <p class="bubble" role="status"></p>
         </figure>
+      </div>
+        <p class="hero-hint">三个 AI 替我值班。把鼠标放在她们身上，或者点一下。</p>
+      </div>
+
+      <div class="hero-caption">
+        <p class="tagline" id="tagline">把做了什么、做到没有，都摆在这里。</p>
+        <div class="hero-notes">
+        <dl class="hero-meta">
+          <div><dt>上次运行</dt><dd class="mono" id="updated">未记录</dd></div>
+          <div><dt id="hero-period-label">最近记录</dt><dd class="mono" id="hero-status">还没有记录</dd></div>
+        </dl>
+        <p class="record-context" id="record-context" hidden></p>
+        </div>
+        <div class="hero-actions">
+          <a class="read-report" href="#report"><span id="report-link-label">查看验收记录</span> <span aria-hidden="true">↘</span></a>
+          <a href="#log"><span id="log-link-label">提交记录</span> <span aria-hidden="true">→</span></a>
+        </div>
       </div>
     </section>
 
